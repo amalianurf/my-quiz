@@ -20,8 +20,9 @@ const QuestionCard = (props) => {
 
   return (
     <div key={props.key} className='w-full h-fit bg-white px-8 py-5 rounded-lg shadow-md'>
-        <div className='flex justify-between md:justify-start items-center w-full my-2'>
+        <div className='flex justify-between items-center w-full my-2'>
             <p className='text-primary font-bold text-lg md:text-xl'>Soal {props.index+1}</p>
+            <p>{props.done}/{props.dataLength}</p>
         </div>
         <p className='w-full text-black text-justify my-4' dangerouslySetInnerHTML={{ __html: props.data.question }}></p>
         <div className='w-full my-1'>

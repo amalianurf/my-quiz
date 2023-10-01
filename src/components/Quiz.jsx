@@ -6,6 +6,7 @@ import { useNavigate } from 'react-router-dom'
 function Quiz() {
   const quizData = JSON.parse(localStorage.getItem('quizData')) || []
   const [data, setData] = useState(quizData)
+  const [done, setDone] = useState(0)
   const [quiz, setQuiz] = useState()
   const navigate = useNavigate()
 
@@ -78,14 +79,18 @@ function Quiz() {
   }, [data])
 
   useEffect(() => {
-    data.forEach((item, i) => {
-      if (item.user_answer !== '') {
-        if (data?.length > i++) {
-          setIndex(i++)
-        }
+    let newIndex = 0
+    while (newIndex < data.length && data[newIndex].user_answer !== '') {
+      newIndex++
+      if (newIndex < data.length) {
+        setIndex(newIndex)
+        setDone(newIndex)
+      } else {
+        navigate('/result', { state: data })
       }
-    })
-  }, [data, setIndex])
+    }
+
+  }, [data, setIndex, setDone, navigate])
 
   if (loading) {
     return <div>Loading...</div>
@@ -99,7 +104,7 @@ function Quiz() {
       </div>
       <div className='md:grid grid-cols-3 gap-3 w-full md:py-8'>
         <div className='col-start-1 col-end-3'>
-          <QuestionCard data={data[index]} handleClick={handleClick} index={index} />
+          <QuestionCard done={done} dataLength={data?.length} data={data[index]} handleClick={handleClick} index={index} />
         </div>
         <div className='hidden md:flex'>
           <div className='flex-none w-full'>
