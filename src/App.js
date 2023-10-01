@@ -1,25 +1,37 @@
-import logo from './logo.svg';
-import './App.css';
+import React, { useState, useEffect } from 'react'
+import Login from './components/Login'
+import Quiz from './components/Quiz'
+import Result from './components/Result'
+import { BrowserRouter as Router, Routes, Route, useNavigate } from 'react-router-dom'
 
-function App() {
-  return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
-    </div>
-  );
+function PrivateRoute({ authenticated, children }) {
+    const navigate = useNavigate()
+
+    if (localStorage.getItem('sessionKey')) {
+        authenticated = true
+    }
+
+    useEffect(() => {
+        if (!authenticated) {
+        navigate('/login');
+        }
+    }, [authenticated, navigate])
+
+    return authenticated ? children : null
 }
 
-export default App;
+function App() {
+    const [authenticated, setAuthenticated] = useState(false)
+
+  return (
+    <Router>
+        <Routes>
+            <Route path='/login' element={<Login setAuthenticated={setAuthenticated} />} />
+            <Route path='/' element={<PrivateRoute authenticated={authenticated}><Quiz /></PrivateRoute>} />
+            <Route path='/result' element={<PrivateRoute authenticated={authenticated}><Result /></PrivateRoute>} />
+        </Routes>
+    </Router>
+  )
+}
+
+export default App
